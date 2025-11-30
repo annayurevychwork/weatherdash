@@ -1,0 +1,259 @@
+body[data-theme="light"] {
+  background: #ffffff5a;
+  color: #333;
+}
+
+body[data-theme="dark"] {
+  background: #1a1a1a;
+  color: #f0f0f0;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #0077ff, #00cfff);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  margin-bottom: 2rem;
+  transition: background 0.3s ease;
+}
+
+body[data-theme="dark"] .app-header {
+  background: #222;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.search-container {
+  flex: 1;
+  margin: 0 1rem;
+}
+
+.search-bar {
+  display: flex;
+  gap: 0.5rem;
+}
+
+body[data-theme="light"] .search-bar input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+body[data-theme="dark"] .search-bar input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: #333;
+}
+
+.search-bar button {
+  padding: 0.7rem 1.2rem;
+  border-radius: 25px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #005fcc;
+  color: white;
+}
+
+body[data-theme="light"] .search-bar button {
+  background: #ffffff;
+  color: #0077ff;
+}
+
+body[data-theme="dark"] .search-bar button {
+  background: #333;
+  color: white;
+}
+
+.theme-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: white;
+  color: #0077ff;
+  transition: all 0.2s ease;
+}
+
+body[data-theme="dark"] .theme-btn {
+  background: #333;
+  color: white;
+}
+
+.saved-cities ul {
+  display: flex;
+  overflow-x: auto;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  margin: 0;
+  list-style: none;
+}
+
+.saved-cities li {
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 0.5rem 0.8rem;
+  background: #0077ff;
+  color: white;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+}
+
+body[data-theme="dark"] .saved-cities li {
+  background: #333;
+  color: white;
+}
+
+.saved-cities li:hover {
+  transform: scale(1.05);
+}
+
+.weather-card {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1.5rem;
+  border-radius: 15px;
+}
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .forecast-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .forecast-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.forecast-day {
+  background: rgba(255,255,255,0.15);
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.forecast-day:hover {
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.05);
+}
+
+.forecast-icon {
+  position: relative;
+  height: 50px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.sun {
+  width: 35px;
+  height: 35px;
+  background: radial-gradient(circle at center, #ffdd00 0%, #ffbb00 70%);
+  border-radius: 50%;
+  animation: rotate 6s linear infinite, pulse 2s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.025); }
+}
+
+.cloud {
+  width: 45px;
+  height: 25px;
+  background: #fff;
+  border-radius: 50%;
+  position: relative;
+  animation: floatCloud 4s ease-in-out infinite;
+}
+
+body[data-theme="dark"] .cloud {
+  background: #ccc;
+}
+
+body[data-theme="light"] .cloud {
+  background: #555;
+}
+
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: inherit;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.cloud::before { top: -10px; left: 6px; }
+.cloud::after { top: -6px; right: 6px; }
+
+@keyframes floatCloud {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.rain {
+  position: absolute;
+  bottom: 0;
+  width: 2px;
+  height: 12px;
+  background: #00f;
+  animation: rainDrop 0.6s linear infinite;
+}
+
+body[data-theme="dark"] .rain {
+  background: #99f;
+}
+
+body[data-theme="light"] .rain {
+  background: #00f;
+}
+
+@keyframes rainDrop {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(12px); opacity: 0; }
+}
