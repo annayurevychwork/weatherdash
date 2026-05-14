@@ -1,10 +1,40 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { WeatherContext } from "../context/WeatherContext";
 
-export default function WeatherCard() {
-  const { weather } = useContext(WeatherContext);
+const API_KEY = "881c6c33b5a24071b3d211529230412";
 
-  if (!weather) return <p>No data yet. Search for a city.</p>;
+const fetchWeatherData = async (query: string | { lat: number; lon: number } | null) => {
+  if (!query) return null;
+  
+  const qStr = typeof query === "string" ? query : `${query.lat},${query.lon}`;
+  
+  const response = await fetch(
+    `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${qStr}&days=3&aqi=no&alerts=no`
+  );
+  if (!response.ok) throw new Error("City not found");
+  return response.json();
+};
+
+export default function WeatherCard() {
+  const { locationQuery, addToHistory } = useContext(WeatherContext);
+
+  const { data: weather, isLoading, error } = useQuery({
+    queryKey: ["weather", locationQuery],
+    queryFn: () => fetchWeatherData(locationQuery),
+    enabled: !!locationQuery,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  useEffect(() => {
+    if (weather) {
+      addToHistory(weather.location.name);
+    }
+  }, [weather]);
+
+  if (isLoading) return <p style={{textAlign: "center"}}>⏳ Завантаження погоди...</p>;
+  if (error) return <p style={{textAlign: "center", color: "red"}}>❌ Помилка: Місто не знайдено</p>;
+  if (!weather) return <p style={{textAlign: "center"}}>Будь ласка, дозвольте геолокацію або введіть місто.</p>;
 
   return (
     <div className="weather-card">
@@ -28,7 +58,7 @@ export default function WeatherCard() {
 
       {weather.forecast && (
         <div className="forecast-grid">
-          {weather.forecast.forecastday.map((day) => {
+          {weather.forecast.forecastday.map((day: any) => {
             const condition = day.day.condition.text.toLowerCase();
             const isSun = condition.includes("sun") || condition.includes("clear");
             const isCloud = condition.includes("cloud") || condition.includes("overcast");

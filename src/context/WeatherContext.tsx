@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 
 type WeatherCondition = {
@@ -17,49 +17,64 @@ export type WeatherData = {
   };
 };
 
+export type LocationQuery = string | { lat: number; lon: number } | null;
+
 type WeatherContextType = {
-  weather: WeatherData | null;
-  fetchWeather: (city: string) => Promise<void>;
+  locationQuery: LocationQuery;
+  setLocationQuery: (query: LocationQuery) => void;
   history: string[];
+  addToHistory: (city: string) => void;
+  fetchGeolocation: () => void;
 };
 
 export const WeatherContext = createContext<WeatherContextType>({
-  weather: null,
-  fetchWeather: async () => {},
+  locationQuery: null,
+  setLocationQuery: () => {},
   history: [],
+  addToHistory: () => {},
+  fetchGeolocation: () => {},
 });
 
 export const WeatherProvider = ({ children }: { children: ReactNode }) => {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [locationQuery, setLocationQuery] = useState<LocationQuery>(null);
   const [history, setHistory] = useState<string[]>(() => {
     const saved = localStorage.getItem("weather-history");
     return saved ? JSON.parse(saved) : [];
   });
 
-  const API_KEY = "881c6c33b5a24071b3d211529230412";
-
-  const fetchWeather = async (city: string) => {
-    try {
-      const response = await fetch(
-        `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${city}&days=3&aqi=no&alerts=no`
+  const fetchGeolocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocationQuery({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Геолокація відхилена або помилка:", error);
+          if (!locationQuery) setLocationQuery("Kyiv");
+        }
       );
-      if (!response.ok) throw new Error("City not found");
-      const data: WeatherData = await response.json();
-      setWeather(data);
-
-      setHistory((prev) => {
-        const newHistory = [city, ...prev.filter((c) => c !== city)].slice(0, 10);
-        localStorage.setItem("weather-history", JSON.stringify(newHistory));
-        return newHistory;
-      });
-    } catch (error) {
-      console.error(error);
-      setWeather(null);
+    } else {
+      console.warn("Ваш браузер не підтримує геолокацію");
     }
   };
 
+  useEffect(() => {
+    fetchGeolocation();
+  }, []);
+
+  const addToHistory = (city: string) => {
+    setHistory((prev) => {
+      const newHistory = [city, ...prev.filter((c) => c !== city)].slice(0, 10);
+      localStorage.setItem("weather-history", JSON.stringify(newHistory));
+      return newHistory;
+    });
+  };
+
   return (
-    <WeatherContext.Provider value={{ weather, fetchWeather, history }}>
+    <WeatherContext.Provider value={{ locationQuery, setLocationQuery, history, addToHistory, fetchGeolocation }}>
       {children}
     </WeatherContext.Provider>
   );

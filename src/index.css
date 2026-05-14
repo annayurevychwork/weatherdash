@@ -1,3 +1,17 @@
+.geo-btn {
+  background: transparent !important;
+  border: none !important;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 0.5rem !important;
+  transition: transform 0.2s ease;
+  color: inherit !important;
+}
+
+.geo-btn:hover {
+  transform: scale(1.2);
+}
+
 body[data-theme="light"] {
   background: #ffffff5a;
   color: #333;
